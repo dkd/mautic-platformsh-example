@@ -55,3 +55,14 @@ hooks:
       touch /app/persistent/installed
     fi;
     php app/console doctrine:migrations:migrate
+
+crons:
+  segments:
+    spec: "0,15,30,45 * * * *"
+    cmd: "php /app/mautic/app/console  mautic:segments:update"
+  campaignsupdate:
+    spec: "5,20,35,50 * * * *"
+    cmd: "php /app/mautic/app/console  mautic:campaigns:update"
+  campaignstrigger:
+    spec: "10,25,40,55 * * * *"
+    cmd: "php /app/mautic/app/console  mautic:campaigns:trigger"
