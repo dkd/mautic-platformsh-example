@@ -1,0 +1,57 @@
+name: app
+
+type: php:7.0
+build:
+  flavor: composer
+
+runtime:
+    extensions:
+        - redis
+        - mcrypt
+        - imap
+        - xdebug
+
+relationships:
+    database: 'mysqldb:mysql'
+    redis: 'rediscache:redis'
+
+web:
+    locations:
+      '/':
+        root: 'mautic'
+        passthru: '/index.php'
+        index:
+          - 'index.php'
+        allow: true
+        scripts: true
+
+disk: 2048
+
+mounts:
+  "persistent/": "shared:files/persistent"
+  "mautic/app/cache/": "shared:files/cache"
+  "mautic/app/logs/": "shared:files/cache"
+
+hooks:
+  build: |
+    set -e
+    cd mautic
+    composer install
+    npm install
+    npm install grunt-cli
+    ./node_modules/.bin/grunt less
+    cd /app/mautic/app/config
+    ln -fs ../../../persistent/local.php local.php
+    cd /app/mautic
+
+  deploy: |
+    set -e
+    if [ ! -f /app/persistent/local.php ]; then
+      cp /app/config.php /app/persistent/local.php
+    fi;
+    if [ ! -f /app/persistent/installed ]; then
+      cd mautic
+      php app/console mautic:install:data
+      touch /app/persistent/installed
+    fi;
+    php app/console doctrine:migrations:migrate
