@@ -14,6 +14,7 @@ $parameters = [
     "db_user"               => $mysql['username'],
     "db_password"           => $mysql['password'],
     "db_table_prefix"       => "",
+    "locale" => 'de',
     "secret"                => getenv("PLATFORM_PROJECT_ENTROPY"),
     "default_pagelimit"     => 10
 ];
