@@ -56,7 +56,7 @@ hooks:
     if [ ! -f /app/persistent/installed ]; then
       cd /app/mautic
       cp -R _media/* media/
-      php app/console mautic:install:data
+      # php app/console mautic:install:data
       touch /app/persistent/installed
     fi;
     cd /app/mautic
