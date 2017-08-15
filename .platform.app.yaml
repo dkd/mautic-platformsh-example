@@ -54,11 +54,12 @@ hooks:
       cp /app/config.php /app/persistent/local.php
     fi;
     if [ ! -f /app/persistent/installed ]; then
-      cd mautic
+      cd /app/mautic
       cp -R _media/* media/
       php app/console mautic:install:data
       touch /app/persistent/installed
     fi;
+    cd /app/mautic
     php app/console doctrine:migrations:migrate
 
 crons:
