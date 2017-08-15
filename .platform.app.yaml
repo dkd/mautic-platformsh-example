@@ -29,8 +29,10 @@ disk: 2048
 
 mounts:
   "persistent/": "shared:files/persistent"
-  "mautic/app/cache/": "shared:files/cache"
-  "mautic/app/logs/": "shared:files/cache"
+  "mautic/app/cache": "shared:files/cache"
+  "mautic/app/logs": "shared:files/logs"
+  "mautic/translations": "shared:files/translations"
+  "mautic/media": "shared:files/medi"
 
 hooks:
   build: |
@@ -43,6 +45,8 @@ hooks:
     cd /app/mautic/app/config
     ln -fs ../../../persistent/local.php local.php
     cd /app/mautic
+    mv media _media
+    mkdir media
 
   deploy: |
     set -e
@@ -51,6 +55,7 @@ hooks:
     fi;
     if [ ! -f /app/persistent/installed ]; then
       cd mautic
+      cp -R _media/* media/
       php app/console mautic:install:data
       touch /app/persistent/installed
     fi;
